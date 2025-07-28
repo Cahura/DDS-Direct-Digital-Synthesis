@@ -53,6 +53,7 @@ Este proyecto implementa un **Sistema de Síntesis Digital Directa (DDS)** en un
 ### Diagrama de Bloques Principal
 
 ```mermaid
+%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#2d3748', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#4a5568', 'lineColor': '#63b3ed', 'secondaryColor': '#1a202c', 'tertiaryColor': '#2d3748'}}}%%
 graph TB
     subgraph CONTROL ["🖥️ INTERFAZ DE CONTROL"]
         direction TB
@@ -114,12 +115,12 @@ graph TB
     F ==>|FCW 9:0| G
     M ==>|PWM Signal| N
     
-    %% Estilos avanzados
-    classDef interfaceStyle fill:#1565C0,stroke:#0D47A1,stroke-width:3px,color:#fff,font-weight:bold
-    classDef niosStyle fill:#7B1FA2,stroke:#4A148C,stroke-width:3px,color:#fff,font-weight:bold
-    classDef ddsStyle fill:#F57C00,stroke:#E65100,stroke-width:3px,color:#fff,font-weight:bold
-    classDef lutStyle fill:#388E3C,stroke:#1B5E20,stroke-width:3px,color:#fff,font-weight:bold
-    classDef outputStyle fill:#D32F2F,stroke:#B71C1C,stroke-width:3px,color:#fff,font-weight:bold
+    %% Estilos minimalistas tema oscuro
+    classDef interfaceStyle fill:#2563eb,stroke:#1d4ed8,stroke-width:2px,color:#ffffff
+    classDef niosStyle fill:#9333ea,stroke:#7c3aed,stroke-width:2px,color:#ffffff
+    classDef ddsStyle fill:#ea580c,stroke:#dc2626,stroke-width:2px,color:#ffffff
+    classDef lutStyle fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#ffffff
+    classDef outputStyle fill:#dc2626,stroke:#b91c1c,stroke-width:2px,color:#ffffff
     
     class A,B interfaceStyle
     class C,D,E,F niosStyle
@@ -127,17 +128,18 @@ graph TB
     class H,I,J lutStyle
     class N,O outputStyle
     
-    %% Estilos de subgrafos
-    style CONTROL fill:#E3F2FD,stroke:#1976D2,stroke-width:4px
-    style NIOS fill:#F3E5F5,stroke:#7B1FA2,stroke-width:4px
-    style DDS fill:#FFF3E0,stroke:#F57C00,stroke-width:4px
-    style LUTS fill:#E8F5E8,stroke:#388E3C,stroke-width:4px
-    style OUTPUT fill:#FFEBEE,stroke:#D32F2F,stroke-width:4px
+    %% Estilos de subgrafos tema oscuro minimalista
+    style CONTROL fill:#1e293b,stroke:#3b82f6,stroke-width:2px
+    style NIOS fill:#1e293b,stroke:#a855f7,stroke-width:2px
+    style DDS fill:#1e293b,stroke:#f97316,stroke-width:2px
+    style LUTS fill:#1e293b,stroke:#22c55e,stroke-width:2px
+    style OUTPUT fill:#1e293b,stroke:#ef4444,stroke-width:2px
 ```
 
 ### Flujo de Datos
 
 ```mermaid
+%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#2d3748', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#4a5568', 'lineColor': '#63b3ed', 'secondaryColor': '#1a202c', 'tertiaryColor': '#2d3748'}}}%%
 flowchart LR
     subgraph INPUT ["📱 ENTRADA"]
         A["🖥️ Terminal<br/>Eclipse IDE"]
@@ -191,15 +193,15 @@ flowchart LR
     L -.->|Clock| E
     I -.->|Enable| E
     
-    %% Estilos modernos con gradientes
-    classDef inputStyle fill:linear-gradient(90deg, #2196F3, #21CBF3),stroke:#1976D2,stroke-width:3px,color:#fff,font-weight:bold
-    classDef commStyle fill:linear-gradient(90deg, #4CAF50, #8BC34A),stroke:#388E3C,stroke-width:3px,color:#fff,font-weight:bold
-    classDef procStyle fill:linear-gradient(90deg, #9C27B0, #E91E63),stroke:#7B1FA2,stroke-width:3px,color:#fff,font-weight:bold
-    classDef signalStyle fill:linear-gradient(90deg, #FF9800, #FFC107),stroke:#F57C00,stroke-width:3px,color:#fff,font-weight:bold
-    classDef convStyle fill:linear-gradient(90deg, #F44336, #FF5722),stroke:#D32F2F,stroke-width:3px,color:#fff,font-weight:bold
-    classDef filterStyle fill:linear-gradient(90deg, #795548, #8D6E63),stroke:#5D4037,stroke-width:3px,color:#fff,font-weight:bold
-    classDef finalStyle fill:linear-gradient(90deg, #607D8B, #90A4AE),stroke:#455A64,stroke-width:3px,color:#fff,font-weight:bold
-    classDef clockStyle fill:linear-gradient(90deg, #009688, #4DB6AC),stroke:#00695C,stroke-width:3px,color:#fff,font-weight:bold
+    %% Estilos minimalistas tema oscuro
+    classDef inputStyle fill:#2563eb,stroke:#1d4ed8,stroke-width:2px,color:#ffffff
+    classDef commStyle fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#ffffff
+    classDef procStyle fill:#9333ea,stroke:#7c3aed,stroke-width:2px,color:#ffffff
+    classDef signalStyle fill:#ea580c,stroke:#dc2626,stroke-width:2px,color:#ffffff
+    classDef convStyle fill:#dc2626,stroke:#b91c1c,stroke-width:2px,color:#ffffff
+    classDef filterStyle fill:#7c2d12,stroke:#92400e,stroke-width:2px,color:#ffffff
+    classDef finalStyle fill:#475569,stroke:#334155,stroke-width:2px,color:#ffffff
+    classDef clockStyle fill:#047857,stroke:#065f46,stroke-width:2px,color:#ffffff
     
     class A inputStyle
     class B commStyle
@@ -210,15 +212,15 @@ flowchart LR
     class K finalStyle
     class L clockStyle
     
-    %% Estilos de subgrafos con efectos
-    style INPUT fill:#E3F2FD,stroke:#1976D2,stroke-width:4px,stroke-dasharray: 5 5
-    style COMM fill:#E8F5E8,stroke:#388E3C,stroke-width:4px,stroke-dasharray: 5 5
-    style PROC fill:#F3E5F5,stroke:#7B1FA2,stroke-width:4px,stroke-dasharray: 5 5
-    style SIGNAL fill:#FFF3E0,stroke:#F57C00,stroke-width:4px,stroke-dasharray: 5 5
-    style CONV fill:#FFEBEE,stroke:#D32F2F,stroke-width:4px,stroke-dasharray: 5 5
-    style FILTER fill:#EFEBE9,stroke:#5D4037,stroke-width:4px,stroke-dasharray: 5 5
-    style FINAL fill:#ECEFF1,stroke:#455A64,stroke-width:4px,stroke-dasharray: 5 5
-    style CLOCK fill:#E0F2F1,stroke:#00695C,stroke-width:4px,stroke-dasharray: 5 5
+    %% Estilos de subgrafos tema oscuro
+    style INPUT fill:#1e293b,stroke:#3b82f6,stroke-width:2px
+    style COMM fill:#1e293b,stroke:#22c55e,stroke-width:2px
+    style PROC fill:#1e293b,stroke:#a855f7,stroke-width:2px
+    style SIGNAL fill:#1e293b,stroke:#f97316,stroke-width:2px
+    style CONV fill:#1e293b,stroke:#ef4444,stroke-width:2px
+    style FILTER fill:#1e293b,stroke:#a16207,stroke-width:2px
+    style FINAL fill:#1e293b,stroke:#64748b,stroke-width:2px
+    style CLOCK fill:#1e293b,stroke:#059669,stroke-width:2px
 ```
 
 ### Diagrama Interactivo de Arquitectura DDS
@@ -226,37 +228,43 @@ flowchart LR
 <div align="center">
 
 ```mermaid
-gitgraph
-    commit id: "🚀 Sistema Inicializado"
+%%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#2d3748', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#4a5568', 'lineColor': '#63b3ed', 'secondaryColor': '#1a202c', 'tertiaryColor': '#2d3748'}}}%%
+graph TD
+    START["🚀 Sistema Inicializado"] --> INIT_UART["📡 UART Configurado"]
+    INIT_UART --> RECV_DATA["📨 Datos Recibidos"]
     
-    branch uart-comm
-    checkout uart-comm
-    commit id: "📡 UART Configurado"
-    commit id: "📨 Datos Recibidos"
+    START --> INIT_NIOS["🧠 Nios II Activo"]
+    INIT_NIOS --> GEN_FCW["🔢 FCW Generado"]
     
-    branch nios-processing
-    checkout nios-processing
-    commit id: "🧠 Nios II Activo"
-    commit id: "🔢 FCW Generado"
+    START --> INIT_DDS["⚙️ Acumulador Funcionando"]
+    INIT_DDS --> ACCESS_LUT["📊 LUTs Accedidas"]
+    ACCESS_LUT --> SELECT_MUX["🔀 MUX Seleccionado"]
     
-    branch dds-core
-    checkout dds-core
-    commit id: "⚙️ Acumulador Funcionando"
-    commit id: "📊 LUTs Accedidas"
-    commit id: "🔀 MUX Seleccionado"
+    START --> INIT_OUTPUT["⚡ PWM Generado"]
+    INIT_OUTPUT --> FILTER_SIG["🔍 Señal Filtrada"]
+    FILTER_SIG --> ANALOG_OUT["🎵 Salida Analógica"]
     
-    branch output
-    checkout output
-    commit id: "⚡ PWM Generado"
-    commit id: "🔍 Señal Filtrada"
-    commit id: "🎵 Salida Analógica"
+    RECV_DATA --> MERGE["🔄 Sincronización"]
+    GEN_FCW --> MERGE
+    SELECT_MUX --> MERGE
+    ANALOG_OUT --> MERGE
     
-    checkout main
-    merge uart-comm
-    merge nios-processing
-    merge dds-core
-    merge output
-    commit id: "✅ Sistema DDS Completo"
+    MERGE --> COMPLETE["✅ Sistema DDS Completo"]
+    
+    %% Estilos del timeline tema oscuro
+    classDef startStyle fill:#1e293b,stroke:#3b82f6,stroke-width:3px,color:#ffffff
+    classDef uartStyle fill:#1e293b,stroke:#22c55e,stroke-width:3px,color:#ffffff
+    classDef niosStyle fill:#1e293b,stroke:#a855f7,stroke-width:3px,color:#ffffff
+    classDef ddsStyle fill:#1e293b,stroke:#f97316,stroke-width:3px,color:#ffffff
+    classDef outputStyle fill:#1e293b,stroke:#ef4444,stroke-width:3px,color:#ffffff
+    classDef mergeStyle fill:#1e293b,stroke:#64748b,stroke-width:3px,color:#ffffff
+    classDef completeStyle fill:#1e293b,stroke:#059669,stroke-width:3px,color:#ffffff
+    
+    class START,MERGE,COMPLETE startStyle
+    class INIT_UART,RECV_DATA uartStyle
+    class INIT_NIOS,GEN_FCW niosStyle
+    class INIT_DDS,ACCESS_LUT,SELECT_MUX ddsStyle
+    class INIT_OUTPUT,FILTER_SIG,ANALOG_OUT outputStyle
 ```
 
 </div>
