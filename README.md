@@ -54,79 +54,212 @@ Este proyecto implementa un **Sistema de Síntesis Digital Directa (DDS)** en un
 
 ```mermaid
 graph TB
-    subgraph "🖥️ INTERFAZ DE CONTROL"
-        A[Eclipse IDE<br/>Terminal Serial] --> B[UART RS-232<br/>115200 bps]
+    subgraph CONTROL ["🖥️ INTERFAZ DE CONTROL"]
+        direction TB
+        A["🖥️ Eclipse IDE<br/>📟 Terminal Serial"]
+        B["📡 UART RS-232<br/>⚡ 115200 bps"]
+        A ==>|Control Commands| B
     end
     
-    subgraph "⚡ SISTEMA NIOS II"
-        B --> C[CPU Nios II<br/>50 MHz]
-        C --> D[Memoria RAM<br/>4KB]
-        C --> E[UART Controller]
-        C --> F[FCW Generator<br/>10 bits]
-    end
-    
-    subgraph "🔧 NÚCLEO DDS HARDWARE"
-        F -->|FCW[9:0]| G[Acumulador de Fase<br/>10 bits]
+    subgraph NIOS ["⚡ SISTEMA NIOS II EMBEBIDO"]
+        direction TB
+        C["🧠 CPU Nios II<br/>🔄 50 MHz"]
+        D["💾 Memoria RAM<br/>📦 4KB"]
+        E["📨 UART Controller"]
+        F["🔢 FCW Generator<br/>🎯 10 bits"]
         
-        subgraph "📊 TABLAS LOOKUP"
-            H[Senoidal<br/>1024×10b]
-            I[Triangular<br/>1024×10b]
-            J[Diente Sierra<br/>1024×10b]
+        C -.-> D
+        C -.-> E
+        C ==> F
+    end
+    
+    subgraph DDS ["🔧 NÚCLEO DDS HARDWARE"]
+        direction TB
+        G["🔄 Acumulador de Fase<br/>⚙️ 10 bits"]
+        
+        subgraph LUTS ["📊 TABLAS LOOKUP (LUT)"]
+            direction LR
+            H["🌊 Senoidal<br/>📈 1024×10b"]
+            I["📐 Triangular<br/>📈 1024×10b"]
+            J["⚡ Diente Sierra<br/>📈 1024×10b"]
         end
         
-        G -->|fase_out[9:0]| H
-        G -->|fase_out[9:0]| I
-        G -->|fase_out[9:0]| J
+        K["🔀 Multiplexor<br/>🎛️ MUX 3:1"]
+        L["🔘 Botones<br/>🎮 sel[2:0]"]
+        M["⚡ DAC PWM<br/>🎵 10 bits"]
         
-        H --> K[Multiplexor<br/>MUX 3:1]
-        I --> K
-        J --> K
+        G ==>|fase_out[9:0]| H
+        G ==>|fase_out[9:0]| I
+        G ==>|fase_out[9:0]| J
         
-        L[Botones<br/>sel[2:0]] --> K
+        H ==> K
+        I ==> K
+        J ==> K
+        L ==> K
         
-        K -->|data[9:0]| M[DAC PWM<br/>10 bits]
-        M -->|enable| G
+        K ==>|data[9:0]| M
+        M -.->|enable| G
     end
     
-    subgraph "📡 SALIDA ANALÓGICA"
-        M -->|PWM| N[Filtro RC<br/>Paso Bajo]
-        N --> O[Señal Analógica<br/>f = FCW×f_clk/2¹⁰]
+    subgraph OUTPUT ["📡 SALIDA ANALÓGICA"]
+        direction TB
+        N["🔍 Filtro RC<br/>📊 Paso Bajo"]
+        O["📈 Señal Analógica<br/>🎵 f = FCW×f_clk/2¹⁰"]
+        
+        N ==> O
     end
     
-    style A fill:#e1f5fe
-    style C fill:#f3e5f5
-    style G fill:#fff3e0
-    style K fill:#e8f5e8
-    style M fill:#fce4ec
-    style O fill:#f1f8e9
+    %% Conexiones principales
+    B ==>|Serial Data| C
+    F ==>|FCW[9:0]| G
+    M ==>|PWM Signal| N
+    
+    %% Estilos avanzados
+    classDef interfaceStyle fill:#1565C0,stroke:#0D47A1,stroke-width:3px,color:#fff,font-weight:bold
+    classDef niosStyle fill:#7B1FA2,stroke:#4A148C,stroke-width:3px,color:#fff,font-weight:bold
+    classDef ddsStyle fill:#F57C00,stroke:#E65100,stroke-width:3px,color:#fff,font-weight:bold
+    classDef lutStyle fill:#388E3C,stroke:#1B5E20,stroke-width:3px,color:#fff,font-weight:bold
+    classDef outputStyle fill:#D32F2F,stroke:#B71C1C,stroke-width:3px,color:#fff,font-weight:bold
+    
+    class A,B interfaceStyle
+    class C,D,E,F niosStyle
+    class G,K,L,M ddsStyle
+    class H,I,J lutStyle
+    class N,O outputStyle
+    
+    %% Estilos de subgrafos
+    style CONTROL fill:#E3F2FD,stroke:#1976D2,stroke-width:4px
+    style NIOS fill:#F3E5F5,stroke:#7B1FA2,stroke-width:4px
+    style DDS fill:#FFF3E0,stroke:#F57C00,stroke-width:4px
+    style LUTS fill:#E8F5E8,stroke:#388E3C,stroke-width:4px
+    style OUTPUT fill:#FFEBEE,stroke:#D32F2F,stroke-width:4px
 ```
 
 ### Flujo de Datos
 
 ```mermaid
 flowchart LR
-    A[📱 Terminal/Eclipse] --> B[📡 UART]
-    B --> C[🖥️ Nios II]
-    C --> D[🔢 FCW]
-    D --> E[🔄 Acumulador]
-    E --> F[📊 LUTs]
-    F --> G[🔀 MUX]
-    H[🔘 Botones] --> G
-    G --> I[⚡ DAC]
-    I --> J[📊 PWM]
-    J --> K[🔍 Filtro RC]
-    K --> L[📈 Señal Analógica]
+    subgraph INPUT ["📱 ENTRADA"]
+        A["🖥️ Terminal<br/>Eclipse IDE"]
+    end
     
-    M[⏰ Reloj] --> E
-    I -.->|enable| E
+    subgraph COMM ["📡 COMUNICACIÓN"]
+        B["📡 UART<br/>115200 bps"]
+    end
     
-    style A fill:#e3f2fd
-    style C fill:#f3e5f5
-    style E fill:#fff3e0
-    style G fill:#e8f5e8
-    style I fill:#fce4ec
-    style L fill:#f1f8e9
+    subgraph PROC ["🧠 PROCESAMIENTO"]
+        C["🖥️ Nios II<br/>Processor"]
+        D["🔢 FCW<br/>Generator"]
+    end
+    
+    subgraph SIGNAL ["🔄 GENERACIÓN DE SEÑAL"]
+        E["⚙️ Acumulador<br/>de Fase"]
+        F["📊 LUTs<br/>Lookup Tables"]
+        G["🔀 MUX<br/>Selector"]
+        H["🔘 Botones<br/>Control"]
+    end
+    
+    subgraph CONV ["⚡ CONVERSIÓN"]
+        I["⚡ DAC<br/>PWM"]
+    end
+    
+    subgraph FILTER ["� FILTRADO"]
+        J["� Filtro RC<br/>Paso Bajo"]
+    end
+    
+    subgraph FINAL ["📈 SALIDA"]
+        K["🎵 Señal<br/>Analógica"]
+    end
+    
+    subgraph CLOCK ["⏰ SINCRONIZACIÓN"]
+        L["🔄 Reloj<br/>Sistema"]
+    end
+    
+    %% Flujo principal
+    A ==>|Comandos| B
+    B ==>|Serial Data| C
+    C ==>|Control| D
+    D ==>|FCW[9:0]| E
+    E ==>|Fase| F
+    F ==>|Datos| G
+    H ==>|Select| G
+    G ==>|Amplitud| I
+    I ==>|PWM| J
+    J ==>|Filtrada| K
+    
+    %% Señales de control
+    L -.->|Clock| E
+    I -.->|Enable| E
+    
+    %% Estilos modernos con gradientes
+    classDef inputStyle fill:linear-gradient(90deg, #2196F3, #21CBF3),stroke:#1976D2,stroke-width:3px,color:#fff,font-weight:bold
+    classDef commStyle fill:linear-gradient(90deg, #4CAF50, #8BC34A),stroke:#388E3C,stroke-width:3px,color:#fff,font-weight:bold
+    classDef procStyle fill:linear-gradient(90deg, #9C27B0, #E91E63),stroke:#7B1FA2,stroke-width:3px,color:#fff,font-weight:bold
+    classDef signalStyle fill:linear-gradient(90deg, #FF9800, #FFC107),stroke:#F57C00,stroke-width:3px,color:#fff,font-weight:bold
+    classDef convStyle fill:linear-gradient(90deg, #F44336, #FF5722),stroke:#D32F2F,stroke-width:3px,color:#fff,font-weight:bold
+    classDef filterStyle fill:linear-gradient(90deg, #795548, #8D6E63),stroke:#5D4037,stroke-width:3px,color:#fff,font-weight:bold
+    classDef finalStyle fill:linear-gradient(90deg, #607D8B, #90A4AE),stroke:#455A64,stroke-width:3px,color:#fff,font-weight:bold
+    classDef clockStyle fill:linear-gradient(90deg, #009688, #4DB6AC),stroke:#00695C,stroke-width:3px,color:#fff,font-weight:bold
+    
+    class A inputStyle
+    class B commStyle
+    class C,D procStyle
+    class E,F,G,H signalStyle
+    class I convStyle
+    class J filterStyle
+    class K finalStyle
+    class L clockStyle
+    
+    %% Estilos de subgrafos con efectos
+    style INPUT fill:#E3F2FD,stroke:#1976D2,stroke-width:4px,stroke-dasharray: 5 5
+    style COMM fill:#E8F5E8,stroke:#388E3C,stroke-width:4px,stroke-dasharray: 5 5
+    style PROC fill:#F3E5F5,stroke:#7B1FA2,stroke-width:4px,stroke-dasharray: 5 5
+    style SIGNAL fill:#FFF3E0,stroke:#F57C00,stroke-width:4px,stroke-dasharray: 5 5
+    style CONV fill:#FFEBEE,stroke:#D32F2F,stroke-width:4px,stroke-dasharray: 5 5
+    style FILTER fill:#EFEBE9,stroke:#5D4037,stroke-width:4px,stroke-dasharray: 5 5
+    style FINAL fill:#ECEFF1,stroke:#455A64,stroke-width:4px,stroke-dasharray: 5 5
+    style CLOCK fill:#E0F2F1,stroke:#00695C,stroke-width:4px,stroke-dasharray: 5 5
 ```
+
+### Diagrama Interactivo de Arquitectura DDS
+
+<div align="center">
+
+```mermaid
+gitgraph
+    commit id: "🚀 Sistema Inicializado"
+    
+    branch uart-comm
+    checkout uart-comm
+    commit id: "📡 UART Configurado"
+    commit id: "📨 Datos Recibidos"
+    
+    branch nios-processing
+    checkout nios-processing
+    commit id: "🧠 Nios II Activo"
+    commit id: "🔢 FCW Generado"
+    
+    branch dds-core
+    checkout dds-core
+    commit id: "⚙️ Acumulador Funcionando"
+    commit id: "📊 LUTs Accedidas"
+    commit id: "🔀 MUX Seleccionado"
+    
+    branch output
+    checkout output
+    commit id: "⚡ PWM Generado"
+    commit id: "🔍 Señal Filtrada"
+    commit id: "🎵 Salida Analógica"
+    
+    checkout main
+    merge uart-comm
+    merge nios-processing
+    merge dds-core
+    merge output
+    commit id: "✅ Sistema DDS Completo"
+```
+
+</div>
 
 ---
 
@@ -430,4 +563,4 @@ Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](L
 
 ---
 
-*Desarrollado con ❤️ para la comunidad de sistemas embebidos y procesamiento digital de señales*
+*Desarrollado para la comunidad de sistemas embebidos y procesamiento digital de señales*
