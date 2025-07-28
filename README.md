@@ -77,41 +77,41 @@ graph TB
         direction TB
         G["🔄 Acumulador de Fase<br/>⚙️ 10 bits"]
         
-        subgraph LUTS ["📊 TABLAS LOOKUP (LUT)"]
+        subgraph LUTS ["📊 TABLAS LOOKUP LUT"]
             direction LR
-            H["🌊 Senoidal<br/>📈 1024×10b"]
-            I["📐 Triangular<br/>📈 1024×10b"]
-            J["⚡ Diente Sierra<br/>📈 1024×10b"]
+            H["🌊 Senoidal<br/>📈 1024x10b"]
+            I["📐 Triangular<br/>📈 1024x10b"]
+            J["⚡ Diente Sierra<br/>📈 1024x10b"]
         end
         
         K["🔀 Multiplexor<br/>🎛️ MUX 3:1"]
-        L["🔘 Botones<br/>🎮 sel[2:0]"]
+        L["🔘 Botones<br/>🎮 sel 2:0"]
         M["⚡ DAC PWM<br/>🎵 10 bits"]
         
-        G ==>|fase_out[9:0]| H
-        G ==>|fase_out[9:0]| I
-        G ==>|fase_out[9:0]| J
+        G ==>|fase_out 9:0| H
+        G ==>|fase_out 9:0| I
+        G ==>|fase_out 9:0| J
         
         H ==> K
         I ==> K
         J ==> K
         L ==> K
         
-        K ==>|data[9:0]| M
+        K ==>|data 9:0| M
         M -.->|enable| G
     end
     
     subgraph OUTPUT ["📡 SALIDA ANALÓGICA"]
         direction TB
         N["🔍 Filtro RC<br/>📊 Paso Bajo"]
-        O["📈 Señal Analógica<br/>🎵 f = FCW×f_clk/2¹⁰"]
+        O["📈 Señal Analógica<br/>🎵 f = FCW x f_clk / 2^10"]
         
         N ==> O
     end
     
     %% Conexiones principales
     B ==>|Serial Data| C
-    F ==>|FCW[9:0]| G
+    F ==>|FCW 9:0| G
     M ==>|PWM Signal| N
     
     %% Estilos avanzados
@@ -179,7 +179,7 @@ flowchart LR
     A ==>|Comandos| B
     B ==>|Serial Data| C
     C ==>|Control| D
-    D ==>|FCW[9:0]| E
+    D ==>|FCW 9:0| E
     E ==>|Fase| F
     F ==>|Datos| G
     H ==>|Select| G
