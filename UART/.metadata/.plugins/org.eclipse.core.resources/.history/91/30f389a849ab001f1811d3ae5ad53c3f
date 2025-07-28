@@ -1,0 +1,89 @@
+#include "sys/alt_stdio.h"
+#include "system.h"
+#include "altera_avalon_pio_regs.h"
+#include "altera_avalon_uart_regs.h"
+
+// Funcion para enviar strings por UART...
+void envia_uart(const char* mensaje) {
+    int uart_status_tx;
+    int index;
+
+    IOWR_ALTERA_AVALON_UART_STATUS(UART_BASE, 0);
+
+    for (index = 0; mensaje[index] != '\0'; index++) {
+        uart_status_tx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x40;
+
+        while (!uart_status_tx) {
+            uart_status_tx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x40;
+        }
+
+        IOWR_ALTERA_AVALON_UART_TXDATA(UART_BASE, mensaje[index]);
+    }
+}
+
+// Funcion para recibir un caracter por UART
+unsigned char recibe_uart(const char* input_request) {
+    unsigned char caracter;
+    int uart_status_rx;
+
+    envia_uart(input_request);
+
+    uart_status_rx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x80;
+
+    while (!uart_status_rx) {
+        uart_status_rx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x80;
+    }
+
+    caracter = IORD_ALTERA_AVALON_UART_RXDATA(UART_BASE);
+
+    return caracter;
+}
+
+void sendBinaryValueToFCW(const char* bin_value) {
+    int value = 0;
+    int i;
+    for (i = 0; i < 10; i++) {
+        value = (value << 1) | (bin_value[i] - '0');
+    }
+    IOWR_ALTERA_AVALON_PIO_DATA(FCW_BASE, value); // Write the value to FCW_BASE
+}
+
+void alt_getline(char* buffer, int size) {
+    int i = 0;
+    char c;
+    while (i < size - 1) {
+        c = alt_getchar();
+        if (c == '\n' || c == '\r') {
+            break;
+        }
+        buffer[i++] = c;
+    }
+    buffer[i] = '\0';
+
+    // Ignorar el carácter de nueva línea restante en el buffer de entrada
+    while (c == '\n' || c == '\r') {
+        c = alt_getchar();
+    }
+}
+
+int main() {
+    unsigned char caracter;
+    char bin_value[11]; // Buffer to store the 10-bit binary value
+
+    while (1) {
+        // Solicitar al usuario que ingrese un valor binario de 10 bits
+        alt_putstr("\nIngresa un valor binario de 10 bits: ");
+        alt_getline(bin_value, 11); // Leer el valor binario ingresado por el usuario
+
+        // Enviar el valor binario a fcw
+        sendBinaryValueToFCW(bin_value);
+
+        // Enviar mensaje de "enviado"
+        envia_uart("Enviado\n");
+
+        // Recibir un caracter para continuar
+        recibe_uart("Presiona una tecla para continuar: ");
+    }
+
+    return 0;
+}

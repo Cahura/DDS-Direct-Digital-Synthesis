@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+newSoftwareExampleWizardPage.defaultLocation=C\:\\dd\\TF\\UART\\software\\UART
+newSoftwareExampleWizardPage.sopcinfoFile=C\:\\dd\\TF\\UART\\UART.sopcinfo
+newSoftwareExampleWizardPage2.newBspLocation=C\:\\dd\\TF\\UART\\software\\UART_bsp

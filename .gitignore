@@ -1,0 +1,70 @@
+# Archivos generados por Quartus II
+*.qws
+*.bak
+*.rpt
+*.summary
+*.smsg
+*.done
+*.pin
+*.jdi
+
+# Directorios de compilación
+db/
+incremental_db/
+output_files/
+simulation/
+greybox_tmp/
+
+# Archivos temporales de ModelSim
+*.vho
+*.sho
+vsim.wlf
+transcript
+work/
+*.vcd
+
+# Archivos de Nios II Software
+software/*/obj/
+software/*/*.elf
+software/*/*.map
+software/*/*.objdump
+software/*/mem_init/
+
+# Archivos temporales del sistema
+*.tmp
+*.temp
+*~
+.#*
+
+# Archivos de log
+*.log
+
+# Archivos específicos de Windows
+Thumbs.db
+Desktop.ini
+
+# Archivos específicos de macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Archivos específicos de Linux
+*~
+.directory
+
+# Archivos de backup
+*.orig
+*.bkp
+
+# Archivos de IP core
+*.qip.bak
+*.sopc.bak
+
+# Archivos de TimeQuest
+*.sta.rpt
+
+# Archivos de Power Analyzer
+*.pow.rpt
+
+# Cache de Quartus
+*.qdb

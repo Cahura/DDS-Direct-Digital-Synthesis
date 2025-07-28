@@ -1,0 +1,109 @@
+#include "sys/alt_stdio.h"
+#include "system.h"
+#include "altera_avalon_pio_regs.h"
+#include "altera_avalon_uart_regs.h"
+
+// Funcion para enviar strings por UART...
+void envia_uart(const char* mensaje) {
+    int uart_status_tx;
+    int index;
+
+    IOWR_ALTERA_AVALON_UART_STATUS(UART_BASE, 0);
+
+    for (index = 0; mensaje[index] != '\0'; index++) {
+        uart_status_tx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x40;
+
+        while (!uart_status_tx) {
+            uart_status_tx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x40;
+        }
+
+        IOWR_ALTERA_AVALON_UART_TXDATA(UART_BASE, mensaje[index]);
+    }
+}
+
+// Funcion para recibir un caracter por UART
+unsigned char recibe_uart(const char* input_request) {
+    unsigned char caracter;
+    int uart_status_rx;
+
+    envia_uart(input_request);
+
+    uart_status_rx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x80;
+
+    while (!uart_status_rx) {
+        uart_status_rx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x80;
+    }
+
+    caracter = IORD_ALTERA_AVALON_UART_RXDATA(UART_BASE);
+
+    return caracter;
+}
+
+void sendDecimalValueToFCW(int value) {
+    IOWR_ALTERA_AVALON_PIO_DATA(FCW_BASE, value); // Write the value to FCW_BASE
+}
+
+void read_input(char* buffer, int size) {
+    int i = 0;
+    char c;
+    while (i < size - 1) {
+        c = alt_getchar();
+        if (c == '\n' || c == '\r') {
+            break;
+        }
+        buffer[i++] = c;
+    }
+    buffer[i] = '\0';
+}
+
+int string_to_int(char* str) {
+    int result = 0;
+    int i = 0;
+    while (str[i] != '\0') {
+        result = result * 10 + (str[i] - '0');
+        i++;
+    }
+    return result;
+}
+
+void clear_memory() {
+    IOWR_ALTERA_AVALON_PIO_DATA(FCW_BASE, 0); // Clear the FCW_BASE memory
+}
+
+int main() {
+    char input_buffer[6]; // Buffer to store the input value (max 5 digits + null terminator)
+    int decimal_value;
+
+    while (1) {
+        // Solicitar al usuario que ingrese un valor decimal
+        alt_putstr("Ingresa un valor (0-1023) o 'exit' para salir: ");
+        read_input(input_buffer, sizeof(input_buffer)); // Leer el valor ingresado por el usuario
+
+        // Verificar si el usuario quiere salir
+        if (input_buffer[0] == 'e' && input_buffer[1] == 'x' && input_buffer[2] == 'i' && input_buffer[3] == 't') {
+            clear_memory();
+            alt_putstr("Programa terminado. Memoria limpiada.\n");
+            break;
+        }
+
+        // Convertir el valor ingresado a entero
+        decimal_value = string_to_int(input_buffer);
+
+        // Verificar que el valor esté en el rango permitido
+        if (decimal_value < 0 || decimal_value > 1023) {
+            alt_putstr("Valor fuera de rango.\n");
+            continue;
+        }
+
+        // Enviar el valor decimal a fcw
+        sendDecimalValueToFCW(decimal_value);
+
+        // Enviar mensaje de "enviado"
+        alt_putstr("Enviado\n");
+
+        // Recibir un caracter para continuar
+        recibe_uart("Presiona una tecla: ");
+    }
+
+    return 0;
+}

@@ -1,0 +1,99 @@
+#include "sys/alt_stdio.h"
+#include "system.h"
+#include "altera_avalon_pio_regs.h"
+#include "altera_avalon_uart_regs.h"
+
+// Funcion para enviar strings por UART...
+void envia_uart(char* mensaje, char eof) {
+    int uart_status_tx;
+    int index;
+
+    IOWR_ALTERA_AVALON_UART_STATUS(UART_BASE, 0);
+
+    for (index = 0; mensaje[index] != eof; index++) {
+        uart_status_tx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x40;
+
+        while (!uart_status_tx) {
+            uart_status_tx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x40;
+        }
+
+        IOWR_ALTERA_AVALON_UART_TXDATA(UART_BASE, mensaje[index]);
+    }
+}
+
+// Funcion para recibir un caracter por UART
+// Esta funcion muestra un mensaje en el terminal antes de leer el caracter...
+// El mensaje esta definido por el usuario segun el string argumento "input_request", que debe terminar
+// en el caracter indicado por el argumento "eof".
+unsigned char recibe_uart(char* input_request, char eof) {
+    unsigned char caracter;
+    int uart_status_rx;
+
+    envia_uart(input_request, eof);
+
+    uart_status_rx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x80;
+
+    while (!uart_status_rx) {
+        uart_status_rx = IORD_ALTERA_AVALON_UART_STATUS(UART_BASE) & 0x80;
+    }
+
+    caracter = IORD_ALTERA_AVALON_UART_RXDATA(UART_BASE);
+
+    return caracter;
+}
+
+void sendBinaryValueToFCW(char* bin_value) {
+    int value = 0;
+    int i;
+    for (i = 0; i < 10; i++) {
+        value = (value << 1) | (bin_value[i] - '0');
+    }
+    IOWR_ALTERA_AVALON_PIO_DATA(FCW_BASE, value); // Write the value to FCW_BASE
+}
+
+void alt_getline(char* buffer, int size) {
+    int i = 0;
+    char c;
+    while (i < size - 1) {
+        c = alt_getchar();
+        if (c == '\n' || c == '\r') {
+            break;
+        }
+        buffer[i++] = c;
+    }
+    buffer[i] = '\0';
+
+    // Ignorar el carácter de nueva línea restante en el buffer de entrada
+    if (c == '\n' || c == '\r') {
+        while (alt_getchar() != '\n' && alt_getchar() != '\r');
+    }
+}
+
+void clear_memory() {
+    IOWR_ALTERA_AVALON_PIO_DATA(FCW_BASE, 0); // Clear the FCW_BASE memory
+}
+
+int main() {
+    unsigned char caracter;
+    char bin_value[11]; // Buffer to store the 10-bit binary value
+
+    while (1) {
+        // Solicitar al usuario que ingrese un valor binario de 10 bits
+        alt_putstr("\nIngresa un valor binario de 10 bits: ");
+        alt_getline(bin_value, 11); // Leer el valor binario ingresado por el usuario
+
+        // Limpiar la memoria antes de enviar el nuevo valor
+        clear_memory();
+
+        // Enviar el valor binario a fcw
+        sendBinaryValueToFCW(bin_value);
+
+        // Enviar mensaje de "enviado"
+        envia_uart("Enviado\n", '\0');
+
+        // Recibir un caracter para continuar
+        caracter = recibe_uart("\nPresiona alguna tecla para continuar: ", '\0');
+    }
+
+    return 0;
+}
