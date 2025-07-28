@@ -1,8 +1,17 @@
 # DDS - Direct Digital Synthesis
 ## Generador de Formas de Onda Digital con Control UART
 
-[![FPGA](https://img.shields.io/badge/FPGA-Cyclone%20II%20EP2C5T144C8-blue)]()
-[![Language](https://img.shields.io/badge/Language-VHDL-orange)]()
+[![FPGA](https://img.shields.io/badge/FPGA-Cyclone%20II%20EP2C5T144C8-blue    subgraph FILTER ["🔍 FILTRADO"]
+        J("🔍 Filtro RC<br/>Paso Bajo")
+    end
+    
+    subgraph FINAL ["📈 SALIDA"]
+        K("🎵 Señal<br/>Analógica")
+    end
+    
+    subgraph CLOCK ["⏰ SINCRONIZACIÓN"]
+        L("🔄 Reloj<br/>Sistema")
+    endnguage](https://img.shields.io/badge/Language-VHDL-orange)]()
 [![Processor](https://img.shields.io/badge/Processor-Nios%20II-green)]()
 [![License](https://img.shields.io/badge/License-MIT-yellow)]()
 
@@ -57,17 +66,17 @@ Este proyecto implementa un **Sistema de Síntesis Digital Directa (DDS)** en un
 graph TB
     subgraph CONTROL ["🖥️ INTERFAZ DE CONTROL"]
         direction TB
-        A["🖥️ Eclipse IDE<br/>📟 Terminal Serial"]
-        B["📡 UART RS-232<br/>⚡ 115200 bps"]
+        A("🖥️ Eclipse IDE<br/>📟 Terminal Serial")
+        B("📡 UART RS-232<br/>⚡ 115200 bps")
         A ==>|Control Commands| B
     end
     
     subgraph NIOS ["⚡ SISTEMA NIOS II EMBEBIDO"]
         direction TB
-        C["🧠 CPU Nios II<br/>🔄 50 MHz"]
-        D["💾 Memoria RAM<br/>📦 4KB"]
-        E["📨 UART Controller"]
-        F["🔢 FCW Generator<br/>🎯 10 bits"]
+        C("🧠 CPU Nios II<br/>🔄 50 MHz")
+        D("💾 Memoria RAM<br/>📦 4KB")
+        E("📨 UART Controller")
+        F("🔢 FCW Generator<br/>🎯 10 bits")
         
         C -.-> D
         C -.-> E
@@ -76,18 +85,18 @@ graph TB
     
     subgraph DDS ["🔧 NÚCLEO DDS HARDWARE"]
         direction TB
-        G["🔄 Acumulador de Fase<br/>⚙️ 10 bits"]
+        G("🔄 Acumulador de Fase<br/>⚙️ 10 bits")
         
         subgraph LUTS ["📊 TABLAS LOOKUP LUT"]
             direction LR
-            H["🌊 Senoidal<br/>📈 1024x10b"]
-            I["📐 Triangular<br/>📈 1024x10b"]
-            J["⚡ Diente Sierra<br/>📈 1024x10b"]
+            H("🌊 Senoidal<br/>📈 1024x10b")
+            I("📐 Triangular<br/>📈 1024x10b")
+            J("⚡ Diente Sierra<br/>📈 1024x10b")
         end
         
-        K["🔀 Multiplexor<br/>🎛️ MUX 3:1"]
-        L["🔘 Botones<br/>🎮 sel 2:0"]
-        M["⚡ DAC PWM<br/>🎵 10 bits"]
+        K("🔀 Multiplexor<br/>🎛️ MUX 3:1")
+        L("🔘 Botones<br/>🎮 sel 2:0")
+        M("⚡ DAC PWM<br/>🎵 10 bits")
         
         G ==>|fase_out 9:0| H
         G ==>|fase_out 9:0| I
@@ -104,8 +113,8 @@ graph TB
     
     subgraph OUTPUT ["📡 SALIDA ANALÓGICA"]
         direction TB
-        N["🔍 Filtro RC<br/>📊 Paso Bajo"]
-        O["📈 Señal Analógica<br/>🎵 f = FCW x f_clk / 2^10"]
+        N("🔍 Filtro RC<br/>📊 Paso Bajo")
+        O("📈 Señal Analógica<br/>🎵 f = FCW x f_clk / 2^10")
         
         N ==> O
     end
@@ -142,27 +151,27 @@ graph TB
 %%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#2d3748', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#4a5568', 'lineColor': '#63b3ed', 'secondaryColor': '#1a202c', 'tertiaryColor': '#2d3748'}}}%%
 flowchart LR
     subgraph INPUT ["📱 ENTRADA"]
-        A["🖥️ Terminal<br/>Eclipse IDE"]
+        A("🖥️ Terminal<br/>Eclipse IDE")
     end
     
     subgraph COMM ["📡 COMUNICACIÓN"]
-        B["📡 UART<br/>115200 bps"]
+        B("📡 UART<br/>115200 bps")
     end
     
     subgraph PROC ["🧠 PROCESAMIENTO"]
-        C["🖥️ Nios II<br/>Processor"]
-        D["🔢 FCW<br/>Generator"]
+        C("🖥️ Nios II<br/>Processor")
+        D("🔢 FCW<br/>Generator")
     end
     
     subgraph SIGNAL ["🔄 GENERACIÓN DE SEÑAL"]
-        E["⚙️ Acumulador<br/>de Fase"]
-        F["📊 LUTs<br/>Lookup Tables"]
-        G["🔀 MUX<br/>Selector"]
-        H["🔘 Botones<br/>Control"]
+        E("⚙️ Acumulador<br/>de Fase")
+        F("📊 LUTs<br/>Lookup Tables")
+        G("🔀 MUX<br/>Selector")
+        H("🔘 Botones<br/>Control")
     end
     
     subgraph CONV ["⚡ CONVERSIÓN"]
-        I["⚡ DAC<br/>PWM"]
+        I("⚡ DAC<br/>PWM")
     end
     
     subgraph FILTER ["� FILTRADO"]
@@ -230,26 +239,26 @@ flowchart LR
 ```mermaid
 %%{init: {'theme':'dark', 'themeVariables': { 'primaryColor': '#2d3748', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#4a5568', 'lineColor': '#63b3ed', 'secondaryColor': '#1a202c', 'tertiaryColor': '#2d3748'}}}%%
 graph TD
-    START["🚀 Sistema Inicializado"] --> INIT_UART["📡 UART Configurado"]
-    INIT_UART --> RECV_DATA["📨 Datos Recibidos"]
+    START("🚀 Sistema Inicializado") --> INIT_UART("📡 UART Configurado")
+    INIT_UART --> RECV_DATA("📨 Datos Recibidos")
     
-    START --> INIT_NIOS["🧠 Nios II Activo"]
-    INIT_NIOS --> GEN_FCW["🔢 FCW Generado"]
+    START --> INIT_NIOS("🧠 Nios II Activo")
+    INIT_NIOS --> GEN_FCW("🔢 FCW Generado")
     
-    START --> INIT_DDS["⚙️ Acumulador Funcionando"]
-    INIT_DDS --> ACCESS_LUT["📊 LUTs Accedidas"]
-    ACCESS_LUT --> SELECT_MUX["🔀 MUX Seleccionado"]
+    START --> INIT_DDS("⚙️ Acumulador Funcionando")
+    INIT_DDS --> ACCESS_LUT("📊 LUTs Accedidas")
+    ACCESS_LUT --> SELECT_MUX("🔀 MUX Seleccionado")
     
-    START --> INIT_OUTPUT["⚡ PWM Generado"]
-    INIT_OUTPUT --> FILTER_SIG["🔍 Señal Filtrada"]
-    FILTER_SIG --> ANALOG_OUT["🎵 Salida Analógica"]
+    START --> INIT_OUTPUT("⚡ PWM Generado")
+    INIT_OUTPUT --> FILTER_SIG("🔍 Señal Filtrada")
+    FILTER_SIG --> ANALOG_OUT("🎵 Salida Analógica")
     
-    RECV_DATA --> MERGE["🔄 Sincronización"]
+    RECV_DATA --> MERGE("🔄 Sincronización")
     GEN_FCW --> MERGE
     SELECT_MUX --> MERGE
     ANALOG_OUT --> MERGE
     
-    MERGE --> COMPLETE["✅ Sistema DDS Completo"]
+    MERGE --> COMPLETE("✅ Sistema DDS Completo")
     
     %% Estilos del timeline tema oscuro
     classDef startStyle fill:#1e293b,stroke:#3b82f6,stroke-width:3px,color:#ffffff
