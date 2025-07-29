@@ -1,17 +1,8 @@
 # DDS - Direct Digital Synthesis
 ## Generador de Formas de Onda Digital con Control UART
 
-[![FPGA](https://img.shields.io/badge/FPGA-Cyclone%20II%20EP2C5T144C8-blue    subgraph FILTER ["🔍 FILTRADO"]
-        J("🔍 Filtro RC<br/>Paso Bajo")
-    end
-    
-    subgraph FINAL ["📈 SALIDA"]
-        K("🎵 Señal<br/>Analógica")
-    end
-    
-    subgraph CLOCK ["⏰ SINCRONIZACIÓN"]
-        L("🔄 Reloj<br/>Sistema")
-    endnguage](https://img.shields.io/badge/Language-VHDL-orange)]()
+[![FPGA](https://img.shields.io/badge/FPGA-Cyclone%20II%20EP2C5T144C8-blue)]()
+[![Language](https://img.shields.io/badge/Language-VHDL-orange)]()
 [![Processor](https://img.shields.io/badge/Processor-Nios%20II-green)]()
 [![License](https://img.shields.io/badge/License-MIT-yellow)]()
 
